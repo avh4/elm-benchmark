@@ -1,6 +1,9 @@
 module Benchmark.Types where
 
-type Result = { name:String, times:[Time] }
+import Time (..)
+import Graphics.Element (..)
 
-data Benchmark = Logic String [() -> () -> ()]
-               | Render String [() -> () -> Element]
+type alias Result = { name:String, times:List Time }
+
+type Benchmark = Logic String (List (() -> () -> ()))
+               | Render String (List (() -> () -> Element))

@@ -26,7 +26,7 @@ Elm.Native.Runner.make = function(elm) {
     var Utils      = Elm.Native.Utils.make(elm);
     var ListUtils  = Elm.Native.List.make(elm);
     var Element    = Elm.Graphics.Element.make(elm);
-    var Renderer   = ElmRuntime.Render.Element();
+    var Renderer   = Elm.Native.Graphics.Element.make(elm);
     var Dimensions = Elm.Native.Window.make(elm).dimensions;
     function now() {
         // We get too many digits from accurate clocks. We only want one
@@ -99,7 +99,7 @@ Elm.Native.Runner.make = function(elm) {
                 bmIndex++;
                 if(bmIndex >= totalBenchmarks) {
                     console.log((now() - startTime));
-                    return { ctor : 'Right'
+                    return { ctor : 'Ok'
                            , _0   : ListUtils.fromArray(results)
                            }
                 }
@@ -117,7 +117,7 @@ Elm.Native.Runner.make = function(elm) {
                 setTimeout(function(){
                     elm.notify(deltas.id,{});
                 },0);
-                return { ctor : 'Left'
+                return { ctor : 'Err'
                        , _0   : emptyElem
                        }
             }
@@ -129,19 +129,19 @@ Elm.Native.Runner.make = function(elm) {
                 element = instrumentedElement(currentFunctions[index]);
             }
             index++;
-            return { ctor : 'Left'
+            return { ctor : 'Err'
                    , _0   : element
                    }
         }
 
         var bmBaseState;
         if(currentFunctionType === 'Logic') {
-            bmBaseState = { ctor : 'Left'
+            bmBaseState = { ctor : 'Err'
                           , _0   : emptyElem
                           }
         } else { // Render
             var elem = instrumentedElement(currentFunctions[index++]);
-            bmBaseState = { ctor : 'Left'
+            bmBaseState = { ctor : 'Err'
                           , _0   : elem
                           }
         }
@@ -176,7 +176,7 @@ Elm.Native.Runner.make = function(elm) {
                               , time: t1
                               };
             setTimeout(function() { elm.notify(deltas.id, deltaObject); }, 0);
-            return newRendering
+            return newRendering;
         }
 
         function benchUpdate(node, oldThunk, newThunk) {
@@ -190,6 +190,7 @@ Elm.Native.Runner.make = function(elm) {
                               , time: t1
                               };
             setTimeout(function() { elm.notify(deltas.id, deltaObject); }, 0);
+            return node;
         }
 
         function timeFunction(f) {

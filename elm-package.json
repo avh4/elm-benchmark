@@ -4,13 +4,15 @@
   "description" : "Benchmark your project! This library lets you test the speed of your logic, data structures, and rendering code.",
   "license" : "BSD 3-clause",
   "repository" : "https://github.com/michaelbjames/elm-benchmark.git",
+  "source-directories": [
+    "./"
+  ],
   "exposed-modules" :
     [ "Benchmark"
     , "Benchmark.DeferredSetup"
     ],
-  "native-modules" :
-    [ "Native.Runner"
-    ],
-  "elm-version" : "0.12.3",
-  "dependencies" : {}
+  "native-modules": true,
+  "dependencies" : {
+    "elm-lang/core": "1.1.0 <= v < 2.0.0"
+  }
 }

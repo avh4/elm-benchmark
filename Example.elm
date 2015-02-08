@@ -1,6 +1,9 @@
 module Main where
 
 import Benchmark (..)
+import Graphics.Collage (..)
+import Color (..)
+import Graphics.Element (..)
 
 slowFib : Int -> Int
 slowFib n =  case n of
@@ -29,7 +32,7 @@ renderMark = render "Increase the radius of a circle" (circleWrapper red) [10..4
 staticMark : Benchmark
 staticMark = renderStatic "Blue Circle, radius 100" (circleWrapper blue 100)
 
-groupMark : [Benchmark]
+groupMark : List Benchmark
 groupMark = [ staticMark
             , renderMark
             , slowFibonacci

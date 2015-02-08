@@ -18,9 +18,11 @@ Simple Benchmarking library
 
 import Benchmark.Types as T
 import Benchmark.Runner as R
+import List (..)
+import Graphics.Element (..)
 
 -- Bindings from other files for a cleaner export
-type Benchmark = T.Benchmark
+type alias Benchmark = T.Benchmark
 
 
 {-| Create a logic benchmark, running a function on many different inputs.
@@ -29,7 +31,7 @@ suite runs, you will see results for each input all labeled with the given name.
  
       logic "Date Parsing" parseDate [ "1/2/1990", "1 Feb 1990", "February 1, 1990" ]
 -}
-logic : String -> (input -> output) -> [input] -> Benchmark
+logic : String -> (input -> output) -> List input -> Benchmark
 logic name function inputs = 
   let noSetup f input = \_ -> let muted a = always () (f a)
                               in \_ -> muted input
@@ -51,7 +53,7 @@ see how well Elm's diffing engine does given the particular sequence you give it
 It may help to record a sequence of states directly from your project. Better to
 use real data instead of making it up!
 -}
-render : String -> (input -> Element) -> [input] -> Benchmark
+render : String -> (input -> Element) -> List input -> Benchmark
 render name function inputs =
   let noSetup f input = \_ _-> f input
   in  T.Render name <| map (noSetup function) inputs
@@ -76,5 +78,5 @@ completed, the screen will change to display them as a line graph
                  ]
     main = run benchmarks
 -}
-run : [Benchmark] -> Signal Element
+run : List Benchmark -> Signal Element
 run = R.run

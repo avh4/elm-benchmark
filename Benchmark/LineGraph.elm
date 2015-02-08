@@ -1,8 +1,18 @@
 module Benchmark.LineGraph (showResults) where
 
 import Benchmark.Types (..)
+import Benchmark.Types
+import List (..)
+import Time (..)
+import Graphics.Collage (..)
+import Color (..)
+import Text (..)
+import Graphics.Element (..)
+import Graphics.Element
 
-type Coordinate = { x:Float, y:Float }
+type alias Coordinate = { x:Float, y:Float }
+
+type alias Result = Benchmark.Types.Result
 
 radius = 5
 h = 500
@@ -12,6 +22,8 @@ margin = { top = 75.0, left = 50.0, right = 75.0, bottom = 75.0 }
 
 types = ["Avenir, Futura, Times"]
 
+zip = map2 (,)
+
 graphResult : Int -> Result -> Element
 graphResult w result =
     let width  = toFloat w
@@ -19,7 +31,7 @@ graphResult w result =
                  , width  = width - margin.left - margin.right }
 
          {-| Scale the Y values to all fit within the graph area -}
-        scaleResults : [Time] -> [Float]
+        scaleResults : List Time -> List Float
         scaleResults times =
             let maxTime = maximum times
                 factor = if maxTime == 0 then 0 else dims.height / maxTime
@@ -27,7 +39,7 @@ graphResult w result =
             in  map adjust times
 
         {-| Equally space N points along the X axis line -}
-        spaceOut : Int -> [Float]
+        spaceOut : Int -> List Float
         spaceOut n =
             let base = [1..n]
                 adjust x = (toFloat x / toFloat n * dims.width) + margin.left
@@ -36,7 +48,7 @@ graphResult w result =
         {-| Reorient our points to use the Elm coordinate system 
             e.g., (0,0) -> (-width/2, -height/2)
         -}
-        fitPoints : [(Float, Float)] -> [(Float, Float)]
+        fitPoints : List (Float, Float) -> List (Float, Float)
         fitPoints points =
             let fit (x,y) = (x - (width / 2), y - (height / 2))
             in  map fit points
@@ -51,7 +63,7 @@ graphResult w result =
         centerOriginPoints = fitPoints centers
         datapoint ((x,y), time) = circle radius |> filled red |> move (x,y)
         datatime  ((x,y), time) =
-            show time |> toText |> typeface types
+            toString time |> fromString |> typeface types
                       |> centered |> toForm |> move (x + 15, y + 15)
                       |> rotate (degrees 30)
         -- Circles
@@ -65,9 +77,9 @@ graphResult w result =
             , segment (-width / 2 + margin.left, -height / 2 + margin.bottom) -- Y axis
                       (-width / 2 + margin.left,  height / 2 - margin.top)
                       |> traced (solid black)
-            , show result.name |> toText |> typeface types -- Test name
+            , toString result.name |> fromString |> typeface types -- Test name
                       |> centered |> toForm |> move (0, -(dims.height / 2) - 20)
-            , "milliseconds" |> toText |> typeface types |> centered |> toForm
+            , "milliseconds" |> fromString |> typeface types |> centered |> toForm
                       |> move (-width /2 + margin.left - 15 , 0) |> rotate (degrees 90)
             ]
         lines = path centerOriginPoints
@@ -80,7 +92,7 @@ graphResult w result =
     in collage w h forms
 
 
-showResults : Int -> [Result] -> Element
+showResults : Int -> List Result -> Element
 showResults width results = map (graphResult width) results
-                    |> intersperse (spacer width 10 |> color darkGrey)
+                    |> intersperse (spacer width 10 |> Graphics.Element.color darkGrey)
                     |> flow down
