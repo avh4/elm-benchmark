@@ -3,7 +3,10 @@ module Main where
 import Benchmark (..)
 import Benchmark.DeferredSetup as DS
 import Dict as D
+import List (..)
+import Graphics.Element (..)
 
+zip = map2 (,)
 
 -- Convenience function for our set functions
 --setGenerator : ([number] -> [comparable]) -> number -> [() -> D.Dict comparable number]
@@ -184,13 +187,13 @@ fromListBench =
 mapBench =
     let multiplier = 1000
         listDictionary = dictList multiplier
-        mapWrap xs = D.map id xs
+        mapWrap xs = D.map (\_ -> identity) xs
     in DS.logic "map" mapWrap D.fromList listDictionary
 
 
 
 
-benchmarks : [Benchmark]
+benchmarks : List Benchmark
 benchmarks = [ insertBench
              , updateBench
              , removeBench

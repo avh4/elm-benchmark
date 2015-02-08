@@ -1,9 +1,11 @@
 module Main where
 
 import Benchmark (..)
+import List (..)
+import Graphics.Element (..)
 
-imagePaths : [String]
-imagePaths = map (\x -> "images/" ++ show x ++ ".jpg") [1..12]
+imagePaths : List String
+imagePaths = map (\x -> "images/" ++ toString x ++ ".jpg") [1..12]
 
 
 imageDisplay : Benchmark
@@ -24,7 +26,7 @@ tiledImage20 = render "tiledImage20" (tiledImage 20 20) imagePaths
 tiledImage500 : Benchmark
 tiledImage500 = render "tiledImage500" (tiledImage 500 500) imagePaths
 
-benchmark : [Benchmark]
+benchmark : List Benchmark
 benchmark = [ imageDisplay
             , fittedImage500
             , fittedImage5

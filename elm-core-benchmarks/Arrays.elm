@@ -3,6 +3,8 @@ module Main where
 import Benchmark (..)
 import Benchmark.DeferredSetup as DS
 import Array
+import List (..)
+import Graphics.Element (..)
 
 
 emptyBench =
@@ -72,7 +74,7 @@ toListBench =
 
 mapBench =
     let multiplier = 1000
-        toyFunction = id
+        toyFunction = identity
         trialData x = Array.repeat (multiplier * x) ()
         mapWrap array = Array.map toyFunction array
     in  DS.logic "map" mapWrap trialData [1..10]
@@ -96,7 +98,7 @@ foldrBench =
 
 
 
-benchmarks : [Benchmark]
+benchmarks : List Benchmark
 benchmarks = [ emptyBench
              , repeatBench
              , fromListBench

@@ -1,18 +1,24 @@
 module Main where
 
 import Benchmark (..)
+import List (..)
+import Graphics.Element (..)
+import Graphics.Collage (..)
+import Color (..)
+import Text (markdown, asText)
 
+zip = map2 (,)
 
-imagePaths : [String]
-imagePaths = map (\x -> "images/" ++ show x ++ ".jpg") [1..12]
+imagePaths : List String
+imagePaths = map (\x -> "images/" ++ toString x ++ ".jpg") [1..12]
 
-directions : [Direction]
+directions : List Direction
 directions = [up, left, down, right, inward, outward]
 
 intToCircle : Int -> Form
 intToCircle n = filled red <| circle <| toFloat n
 
-sampleContent : [Element]
+sampleContent : List Element
 sampleContent = 
     let images = map (image 500 100) imagePaths
         markdowns = repeat 10 sampleMarkdown
@@ -23,7 +29,7 @@ sampleContent =
     in foldr (++) [] <| map flatten combine2
 
 sampleMarkdown : Element
-sampleMarkdown = [markdown|
+sampleMarkdown = asText """
 Notice again how text always lines up on 4-space indents (including
 that last line which continues item 3 above). Here's a link to [a
 website](http://foo.bar). Here's a link to a [local
@@ -49,7 +55,7 @@ oranges
   : Citrus!
 tomatoes
   : There's no "e" in tomatoe.
-|]
+"""
 
 
 
@@ -58,24 +64,24 @@ tomatoes
     We add and remove in every direction. This generates all those benchmarks
 -}
 
-elemsPerSet : [Int] -> [[Element]]
+elemsPerSet : List Int -> List (List Element)
 elemsPerSet xs = map (\x -> take x sampleContent) xs
 
-flowBenchmark: (String, [Int]) -> Direction -> Benchmark
-flowBenchmark (name,num) d = render (name ++ show d) (flow d) (elemsPerSet num)
+flowBenchmark: (String, List Int) -> Direction -> Benchmark
+flowBenchmark (name,num) d = render (name ++ toString d) (flow d) (elemsPerSet num)
 
-flowNames : [(String,[Int])]
+flowNames : List (String, List Int)
 flowNames = [ ("addToFlow (start at 1 end at 25 elements) -",[1..25])
             , ("removeFromFlow (start at 25 end at 1 element) -", reverse [1..25])
             ]
 
-flowStep : (String,[Int]) -> [Benchmark] -> [Benchmark]
+flowStep : (String, List Int) -> List Benchmark -> List Benchmark
 flowStep (name,num) xs = xs ++ (map (flowBenchmark (name,num)) directions)
 
-flowLayers : (String,[Int]) -> Benchmark
+flowLayers : (String, List Int) -> Benchmark
 flowLayers (name,num) = render (name ++ "-layer") layers (elemsPerSet num)
 
-flows : [Benchmark]
+flows : List Benchmark
 flows = (foldr flowStep [] flowNames) ++ map flowLayers flowNames
 
 
@@ -127,7 +133,7 @@ nestedFlowBench =
     in  render "sprialNestBench" sprialNest trials
 
 
-benchmarks : [Benchmark]
+benchmarks : List Benchmark
 benchmarks = flows ++
              [ addingToFlow
              , removingFromFlow

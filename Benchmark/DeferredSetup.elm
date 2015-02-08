@@ -13,9 +13,11 @@ Benchmarks for more specific purposes where the basic ones will not suffice
 -}
 
 import Benchmark.Types as T
+import List (..)
+import Graphics.Element (..)
 
 -- Bindings from other files for a cleaner export
-type Benchmark = T.Benchmark
+type alias Benchmark = T.Benchmark
 
 
 {-| Run a staged benchmark. There is a setup phase and a timed phase.
@@ -37,7 +39,7 @@ to know how long it takes to visualize the audio frame. So you use a function to
 set things up for the visualizer (i.e., get the song and go to the specific
 frame).
 -}
-render : String -> (input -> Element) -> (seed -> input) -> [seed] -> Benchmark
+render : String -> (input -> Element) -> (seed -> input) -> List seed -> Benchmark
 render name function seedFunction seeds =
   let thunk f seededInputFunction = \_ -> let input = seededInputFunction ()
                                           in  \_ -> f input
@@ -62,7 +64,7 @@ It would be too much for many browsers to allocate dozens of 10000 element lists
 at the same time, so instead we allocate them when we need them. Garbage collection
 can reclaim the lists once the benchmark is done.
 -}
-logic : String -> (input -> output) -> (seed -> input) -> [seed] -> Benchmark
+logic : String -> (input -> output) -> (seed -> input) -> List seed -> Benchmark
 logic name function seedFunction seeds =
   let thunk f seededInputFunction = \_ -> let input = seededInputFunction ()
                                               muted x = always () (f x)
@@ -77,5 +79,5 @@ This will come in handy for the DS.logic benchmarks.
 
       trials = inputMap (\x -> [1..(1000 * x)]) [1..10]
 -}
-inputMap : (seed -> input) -> [seed] -> [() -> input]
+inputMap : (seed -> input) -> List seed -> List (() -> input)
 inputMap f xs = map (\x -> \() -> f x) xs

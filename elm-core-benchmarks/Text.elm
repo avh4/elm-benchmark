@@ -1,6 +1,13 @@
 module Main where
 
 import Benchmark (..)
+import Text (..)
+import Text
+import List (..)
+import Graphics.Element (..)
+import Graphics.Element
+import Graphics.Collage (..)
+import Color (..)
 
 
 staticBenchs = [ renderStatic "Left" <| leftAligned copy
@@ -33,7 +40,7 @@ resizing = render "Markdown fitting into a smaller width" (\x -> width x md1)
     There should be an optimization to resolve only the last style
 -}
 stylespin : Benchmark
-stylespin = let flipflopper i text = case i `mod` 2 of 
+stylespin = let flipflopper i text = case i % 2 of
                                      0 -> monospace text
                                      1 -> typeface ["sans-serif"] text
                 spinner times = leftAligned <| foldr flipflopper copy [1..times]
@@ -57,23 +64,23 @@ changingTypesBetweenMarkdown =
     let display n = flow down [md1, n, md2]
         differentElems = [ asText "Text"
                          , collage 200 200 [circle 5 |> filled red]
-                         , spacer 500 50 |> color blue
+                         , spacer 500 50 |> Graphics.Element.color blue
                          ]
         trialData = foldr (\_ d -> differentElems ++ d) [] [1..5]
     in  [ render "Changing types of elements betweens static markdown" display trialData
-        , render "Changing types of elements no markdown" id trialData ]
+        , render "Changing types of elements no markdown" identity trialData ]
 
 duplicateMd =
-    let flipFlop n = case n `mod` 2 of
+    let flipFlop n = case n % 2 of
         0 -> md1
         1 -> md3
     in render "Switching between logically identical md blocks" flipFlop [1..20]
 
 changingMd =
     let trialData = foldr (\_ md -> md ++ [md1,md2,md4] ) [] [1..5]
-    in  render "Changing markdown blocks" id trialData
+    in  render "Changing markdown blocks" identity trialData
 
-benchmarks : [Benchmark]
+benchmarks : List Benchmark
 benchmarks = [ showmd
              , downsizing
              , resizing
@@ -97,7 +104,7 @@ main = run benchmarks
 -}
 
 copy : Text
-copy = toText "8-bit art party slow-carb authentic VHS next level, fixie Tumblr High Life put a bird on it ethical 90's swag scenester Kickstarter. Truffaut gastropub swag, drinking vinegar bitters Carles hashtag. Cray locavore jean shorts Tumblr drinking vinegar, trust fund Odd Future Helvetica PBR fingerstache iPhone food truck swag brunch tote bag. Food truck farm-to-table 90's fashion axe. Salvia synth bespoke, Shoreditch hoodie pour-over fixie typewriter leggings McSweeney's small batch. Forage DIY mustache, viral irony leggings salvia blog slow-carb. Pug fixie gentrify banh mi, Blue Bottle aesthetic direct trade food truck art party Tonx pour-over chillwave.
+copy = Text.fromString "8-bit art party slow-carb authentic VHS next level, fixie Tumblr High Life put a bird on it ethical 90's swag scenester Kickstarter. Truffaut gastropub swag, drinking vinegar bitters Carles hashtag. Cray locavore jean shorts Tumblr drinking vinegar, trust fund Odd Future Helvetica PBR fingerstache iPhone food truck swag brunch tote bag. Food truck farm-to-table 90's fashion axe. Salvia synth bespoke, Shoreditch hoodie pour-over fixie typewriter leggings McSweeney's small batch. Forage DIY mustache, viral irony leggings salvia blog slow-carb. Pug fixie gentrify banh mi, Blue Bottle aesthetic direct trade food truck art party Tonx pour-over chillwave.
 
 Pickled pour-over paleo Brooklyn fap seitan. Actually wolf seitan mixtape artisan. Bicycle rights Banksy wayfarers messenger bag roof party. Slow-carb letterpress pour-over Vice post-ironic, readymade chambray YOLO. Scenester try-hard whatever pickled, messenger bag before they sold out tofu meggings wolf biodiesel mumblecore. Swag Etsy tofu Blue Bottle, hella disrupt tattooed freegan kale chips cray pickled Neutra flannel. Cornhole butcher keytar disrupt gastropub Truffaut gentrify, asymmetrical roof party kitsch 3 wolf moon Neutra fashion axe.
 
@@ -106,7 +113,7 @@ Shoreditch wayfarers photo booth, bicycle rights farm-to-table asymmetrical pale
 Keffiyeh raw denim Williamsburg, iPhone flexitarian swag shabby chic semiotics banjo mumblecore sriracha pork belly. Meggings street art distillery banh mi mumblecore, selvage art party asymmetrical synth. Vice street art salvia mixtape Banksy tote bag, meh cray. Put a bird on it plaid Helvetica viral, mlkshk biodiesel banh mi artisan pour-over Austin Intelligentsia authentic chia aesthetic sartorial. Ennui twee bespoke Blue Bottle Godard. Irony gentrify actually, quinoa Tumblr locavore small batch four loko PBR&B cray raw denim Vice. Fingerstache cornhole meh keffiyeh, Kickstarter synth squid bespoke lo-fi viral ethnic McSweeney's."
 
 md1 : Element
-md1 = [markdown|
+md1 = asText """
 
 # Markdown Support
 
@@ -122,9 +129,9 @@ text elements. You can easily make:
 It all feels quite natural to type. For more information on Markdown,
 see [this site](http://daringfireball.net/projects/markdown/).
 
-|]
+"""
 
-md2 = [markdown|
+md2 = asText """
 
 # Anienis terebrata quoque Hector undae subit illo
 
@@ -143,10 +150,10 @@ Laedor **caelo annos sunt** timemus; mea non Cyllaron, videres! Pictis si tamen
 motaeque amantem **tuas haec compescuit**, mihi candida? Pallada hasta Themis
 pictis memor non homines potest, male nuribusque area tendentemque illo, quid?
 
-|]
+"""
 
 md3 : Element
-md3 = [markdown|
+md3 = asText """
 
 # Markdown Support
 
@@ -162,10 +169,10 @@ text elements. You can easily make:
 It all feels quite natural to type. For more information on Markdown,
 see [this site](http://daringfireball.net/projects/markdown/).
 
-|]
+"""
 
 md4 : Element
-md4 = [markdown|
+md4 = asText """
 
 # Markdown Support
 
@@ -195,7 +202,7 @@ text elements. You can easily make:
 It all feels quite natural to type. For more information on Markdown,
 see [this site](http://daringfireball.net/projects/markdown/).
 
-|]
+"""
 
 
 
